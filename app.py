@@ -175,15 +175,15 @@ if __name__ == "__main__":
         'source_path', help='Path to .ipynb file with experiment')
     parser.add_argument('-d', '--dest_path', default=f'{current_path}',
                         help='Path to experiment data backup, default is %(default)s')
-    parser.add_argument('-a', '--include_all', action='store_true',
-                        help='Parses all learners works and all datasets if enabled')
+    parser.add_argument('-s', '--save_notebook', action='store_true',
+                        help='Saves notebook inside project directory')
 
     args = parser.parse_args()
     source_path = Path(args.source_path)
     dest_path = Path(args.dest_path)
-    include_all = args.include_all
+    save_notebook = args.save_notebook
 
-    project_name = f"{source_path.stem}_{strftime('%d.%m.%Y_%H:%M:%S', localtime())}"
+    project_name = f"{source_path.stem}_{strftime('%H:%M_%d.%m.%Y', localtime())}"
 
     project_path = dest_path/project_name
     project_path.mkdir(parents=True, exist_ok=True)
@@ -191,6 +191,9 @@ if __name__ == "__main__":
     images_path = project_path/'images'
     images_path.mkdir(parents=True, exist_ok=True)
     dataset_path = project_path/'dataset_backup'
+
+    if save_notebook:
+        shutil.copy(source_path, project_path/source_path.name)
 
     with open(source_path, 'r') as f:
         nb_data = json.load(f)
